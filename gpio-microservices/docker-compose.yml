@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+  api:
+    build: api
+    command: ["flask", "run", "--host=0.0.0.0"]
+    volumes:
+      - ./api:/backend
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=app.py
+    ports:
+      - "5000:5000"
+  servo_api:
+    build: servo_api
+    command: ["flask", "run", "--host=0.0.0.0"]
+    volumes:
+      - ./servo_api:/backend
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=app.py
+    ports:
+      - "5001:5000"
+  motor_api:
+    build: motor_api
+    command: ["flask", "run", "--host=0.0.0.0"]
+    volumes:
+      - ./motor_api:/backend
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=app.py
+    ports:
+      - "5002:5000"
+
+  client:
+    tty: true
+    build: client
+    command: ["npm", "start"]
+    volumes:
+      - ./client:/frontend
+      - node-modules:/frontend/node_modules
+    environment:
+      - NODE_ENV=development
+    ports:
+      - '3000:3000'
+    depends_on:
+      - api
+
+volumes:
+  node-modules:
